@@ -149,7 +149,7 @@ class TestCounterHandler(unittest.TestCase):
         for v in expected.keys():
             self.assertAlmostEqual(t0, self.handler.last_record[v], 0)
 
-        assert json.loads(self.handler.dump_json())["counts"] == expected
+        assert json.loads(self.handler.dump_json())["count"] == expected
         test_dump = self.handler.dump_text().splitlines()
 
         assert len(test_dump) == 4

@@ -54,7 +54,7 @@ setup(
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Logging Tools',
+        'Topic :: System :: Logging',
 
         # Pick your license as you wish
         'License :: OSI Approved :: MIT License',

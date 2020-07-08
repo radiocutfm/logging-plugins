@@ -1,4 +1,4 @@
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 import re
 import sys
@@ -29,6 +29,17 @@ def parse_level(level):
     if not isinstance(level, int):
         raise RuntimeError("Invalid loglevel {}".format(level))
     return level
+
+
+def parse_signal(sig):
+    if isinstance(sig, int):
+        return sig
+
+    sig = sig.upper()
+    if not sig.startswith("SIG"):
+        sig = "SIG" + sig
+
+    return getattr(signal, sig)
 
 
 if sys.version_info.major < 3:
@@ -175,7 +186,7 @@ class CounterHandler(logging.Handler):
         self.last_record[level_str] = time.time()
 
     def dump_json(self):
-        return json.dumps({"counts": self.counts, "last_record": self.last_record})
+        return json.dumps({"count": self.counts, "last_record": self.last_record})
 
     def dump_text(self):
         keys = sorted(self.counts.keys())
@@ -186,13 +197,10 @@ class CounterHandler(logging.Handler):
 
 
 class DumpOnSignalCounterHandler(CounterHandler):
-    def __init__(self, filename, sig="SIGUSR1", format="json"):
+    def __init__(self, filename, sig="SIGUSR2", format="json"):
         super(DumpOnSignalCounterHandler, self).__init__()
         self.filename = filename
-        if isinstance(sig, int):
-            self.sig = sig
-        else:
-            self.sig = getattr(signal, sig)
+        self.sig = parse_signal(sig)
         self.format = format
 
         signal.signal(self.sig, self.handle_signal)
